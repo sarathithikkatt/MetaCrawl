@@ -7,16 +7,23 @@ from metacrawl.utils.logger import get_logger
 logger = get_logger(__name__)
 
 async def main_async(urls, json_output, max_topics):
+    logger.debug(f"CLI args: urls={urls}, json={json_output}, max_topics={max_topics}")
     pipeline = get_configured_pipeline()
     results = []
     
-    # Process sequentially for demonstration.
+    logger.info(f"Starting CLI crawl for {len(urls)} URL(s)")
     for url in urls:
-        if not json_output:
-            logger.info(f"Initiating CLI crawl for {url}")
+        logger.info(f"Crawling: {url}")
         try:
             data = await pipeline.process_url(url)
             dump = data.model_dump()
+            
+            if data.error:
+                logger.warning(f"Crawl returned error for {url}: {data.error}")
+            elif not data.content:
+                logger.warning(f"Crawl returned empty content for {url}")
+            else:
+                logger.debug(f"Crawl OK for {url}: type={data.page_type}, content_len={len(data.content or '')}")
             
             if json_output:
                 results.append(dump)
@@ -29,9 +36,9 @@ async def main_async(urls, json_output, max_topics):
                 print(f"Headings Found: {len(dump['headings'])}")
                 print("-" * 40)
         except Exception as e:
-            if not json_output:
-                logger.error(f"Failed processing {url} from CLI: {e}")
+            logger.error(f"Failed processing {url} from CLI: {e}", exc_info=True)
             
+    logger.info(f"CLI crawl complete — processed {len(urls)} URL(s)")
     if json_output:
         print(json.dumps(results, indent=2))
 

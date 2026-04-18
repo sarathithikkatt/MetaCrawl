@@ -73,6 +73,9 @@ Pipfile.lock
 # poetry
 poetry.lock
 
+# Logs
+logs/
+
 # dotenv
 .env
 .env.*

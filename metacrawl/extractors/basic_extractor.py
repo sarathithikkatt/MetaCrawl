@@ -2,12 +2,18 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from typing import Dict, Any, List
 from .base import BaseExtractor
+from metacrawl.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class BasicExtractor(BaseExtractor):
     def extract(self, html: str, url: str) -> Dict[str, Any]:
+        logger.debug(f"Starting basic extraction for {url}")
         soup = BeautifulSoup(html, "lxml")
         
         title = soup.title.string.strip() if soup.title and soup.title.string else None
+        if not title:
+            logger.warning(f"No <title> found for {url}")
         
         meta_desc = soup.find("meta", attrs={"name": "description"}) or soup.find("meta", attrs={"property": "og:description"})
         description = meta_desc.get("content", "").strip() if meta_desc and meta_desc.get("content") else None
@@ -20,6 +26,8 @@ class BasicExtractor(BaseExtractor):
                     
         # Basic content: just dump everything
         content = soup.get_text(separator="\n", strip=True)
+        if not content:
+            logger.warning(f"No text content extracted for {url}")
             
         links = set()
         for a in soup.find_all("a", href=True):
@@ -34,6 +42,8 @@ class BasicExtractor(BaseExtractor):
                     "src": urljoin(url, img["src"].strip()),
                     "alt": img.get("alt", "").strip() or None
                 })
+
+        logger.debug(f"Basic extraction complete for {url}: {len(headings)} headings, {len(links)} links, {len(images)} images")
             
         return {
             "title": title,
