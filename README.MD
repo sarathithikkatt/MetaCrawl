@@ -1,92 +1,103 @@
-# 🌐 Scalable Web Crawler & Metadata Extraction System
+# 🕸️ MetaCrawl
 
-## 📌 Overview
+**MetaCrawl** is a robust, modular, and extensible web crawling and content extraction system. Built entirely in Python using modern async tools, it is designed to take any URL and convert its page content into a clean, structured JSON format containing text, topics, type classification, and parsed metadata.
 
-This project implements a scalable web crawling and metadata extraction system designed to process billions of URLs efficiently. The system extracts structured metadata from web pages and classifies content into relevant topics.
+## 🚀 Quick Start
 
----
+### 1. Installation
 
-## 🧩 Features
+MetaCrawl uses standard Python packaging defined in `pyproject.toml`.
 
-### ✅ Core Crawler
+To set it up locally, ideally within a virtual environment, simply run:
 
-* Fetches webpage content from any URL
-* Extracts key metadata:
+```bash
+# Create and activate a Virtual Environment (Optional but recommended)
+python -m venv .venv
+# Windows: .venv\Scripts\Activate.ps1
+# Mac/Linux: source .venv/bin/activate
 
-  * Title
-  * Meta description
-  * Headings
-  * Body content
-* Performs basic topic classification
+# Install the package and its dependencies
+pip install -e .
+```
 
-### ⚡ Scalable Architecture
+### 2. Usage
 
-* Designed to handle billions of URLs
-* Distributed crawling using worker nodes
-* Queue-based ingestion system
-* Fault-tolerant and retry-enabled
+Once installed, you can use the command-line interface out of the box to test against any live URLs.
 
-### 📊 Observability
+**Basic CLI Usage:**
+```bash
+python main.py https://en.wikipedia.org/wiki/Web_crawler
+```
+This will print a high-level summary of the page including Domain, Page Type, Title, and Topics extracted.
 
-* Metrics tracking (latency, throughput, failures)
-* Monitoring integration (Prometheus / Grafana / Cloud tools)
-
----
-
-## 🛠️ Tech Stack (Example)
-
-* Language: Python / Node.js / Java
-* HTML Parsing: BeautifulSoup / Cheerio
-* Queue: Kafka / AWS SQS / Google PubSub
-* Storage:
-
-  * Metadata: NoSQL DB (DynamoDB / Bigtable)
-  * Search: Elasticsearch
-* Cloud: AWS / GCP / Azure
-
-
-## 🏗️ System Design
-
-### High-Level Architecture
-
-1. URL Ingestion Layer
-2. Message Queue
-3. Distributed Crawlers
-4. Parsing & Classification Layer
-5. Storage Layer
-6. Monitoring & Logging
+**JSON Output:**
+To get the fully structured dataset (which includes the full content, heading list, and identified links/images), use the `--json` flag:
+```bash
+python main.py https://news.ycombinator.com/ --json
+```
 
 ---
 
-## 📈 Scalability Considerations
+## 🐳 Docker Execution
 
-* Horizontal scaling of crawler workers
-* Batch processing for efficiency
-* Caching repeated requests
-* Adaptive rate limiting
+You can run MetaCrawl entirely via Docker without installing Python locally.
+
+```bash
+# Build the image
+docker build -t metacrawl .
+
+# Run the CLI inside Docker
+docker run metacrawl "https://github.blog"
+```
+
+## 🌐 API Mode (FastAPI)
+
+MetaCrawl includes a built-in FastAPI application for API usage. Spin it up using Docker Compose:
+
+```bash
+docker compose up --build
+```
+This serves the application on `http://localhost:8000`. 
+You can test the endpoint:
+```bash
+curl -X POST "http://localhost:8000/crawl" -H "Content-Type: application/json" -d '{"url":"https://example.com"}'
+```
 
 ---
 
-## 🎯 SLOs / SLAs
+## ⚙️ Configuration
 
-* Availability: 99.9%
-* Latency: < 500ms (per request target)
-* Throughput: Millions of URLs/day
+MetaCrawl is managed using `pydantic-settings`. Configs are read from environment variables matching the `METACRAWL_` prefix.
 
----
+| Env Variable | Description |
+| :--- | :--- |
+| `METACRAWL_TIMEOUT` | Networking max timeout |
+| `METACRAWL_EXTRACTOR_TYPE` | Either `trafilatura` (advanced) or `basic` (fallback parsing) |
+| `METACRAWL_LOG_LEVEL` | Application logging (`INFO`, `DEBUG`) |
 
-## 🧪 Proof of Concept Plan
 
-* Start with small dataset (1K–10K URLs)
-* Validate parsing accuracy
-* Measure latency and cost
-* Gradually scale to larger datasets
+## 📂 Project Structure
 
----
+```text
+MetaCrawl/
+├── Dockerfile                  # Container definition
+├── docker-compose.yml          # Fast API spin-up config
+├── pyproject.toml              # Dependencies config
+├── main.py                     # Root CLI entry target
+├── README.MD                   # Project overview & Setup
+├── DOCUMENTATION.md            # Architectural detail
+└── metacrawl/
+    ├── api/                    # FastAPI routes
+    ├── cli/                    # Argparse CLI builder
+    ├── classifiers/            # Heuristic and structural detectors via BaseClassifier
+    ├── config/                 # Pydantic Settings base
+    ├── extractors/             # HTML data extraction via BaseExtractor
+    ├── fetchers/               # HTTP clients via BaseFetcher
+    ├── models/                 # Shared Data Schemas
+    ├── pipeline/               # Injection logic orchestration
+    ├── topics/                 # TF-IDF Topic detection via BaseTopicExtractor
+    └── utils/                  # Factory bindings and DI logic
+```
 
-## ⚠️ Challenges & Risks
-
-* Handling dynamic / JavaScript-heavy pages
-* Rate limiting from external sites
-* Data consistency at scale
-* Cost control in cloud environments
+## 📚 Learn More
+To learn more about the code architecture, how to plug in alternative Fetchers or Classifiers, read the detailed [DOCUMENTATION.md](DOCUMENTATION.md).

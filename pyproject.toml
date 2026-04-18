@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metacrawl"
+version = "0.1.0"
+description = "A modular web crawling and content extraction system"
+authors = [
+    {name = "sarathithikkatt", email = "sarathithikkatt@gmail.com"}
+]
+readme = "README.MD"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.9.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.1.0",
+    "trafilatura>=1.8.0",
+    "scikit-learn>=1.4.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.27.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0"
+]
+
+[project.scripts]
+metacrawl = "metacrawl.cli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["metacrawl*"]
