@@ -1,8 +1,11 @@
 import re
 from typing import Dict, Any
-from .interfaces import ClassifierABC
+from .base import BaseClassifier
+from metacrawl.utils.logger import get_logger
 
-class HeuristicClassifier(ClassifierABC):
+logger = get_logger(__name__)
+
+class HeuristicClassifier(BaseClassifier):
     def classify(self, extracted_data: Dict[str, Any]) -> str:
         content = extracted_data.get("content", "") or ""
         headings = extracted_data.get("headings", [])
@@ -21,24 +24,23 @@ class HeuristicClassifier(ClassifierABC):
             return "product"
             
         # Homepage heuristics
-        # Typically homepages have little deep content, many links, and titles like "Home" or "Welcome"
         if len(content) < 1000 and len(links) > 20:
             if "home" in title_lower or "welcome" in title_lower or "official site" in title_lower:
                 return "homepage"
                 
         # List/Category heuristics
-        # High link-to-text density usually indicates a category index
         list_keywords = ["category", "index", "all products", "latest posts"]
         list_score = sum(1 for kw in list_keywords if kw in title_lower or kw in all_headings)
         if len(links) > 15 and len(content) < 2000 and (list_score > 0 or len(links) / (len(content) + 1) > 0.05):
             return "category/list"
             
         # Article heuristics
-        # Long coherent text, author info, published dates
         article_keywords = ["published", "read time"]
         article_score = sum(1 for kw in article_keywords if kw in content_lower[:1000])
         
         if len(content) > 1500 or article_score > 0:
+            logger.debug(f"Classified as 'article' (score: {article_score}, length: {len(content)})")
             return "article"
             
+        logger.debug("Classified as 'other'")
         return "other"

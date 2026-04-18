@@ -2,9 +2,12 @@ from bs4 import BeautifulSoup
 import trafilatura
 from urllib.parse import urljoin
 from typing import Dict, Any, List
-from .interfaces import ExtractorABC
+from .base import BaseExtractor
+from metacrawl.utils.logger import get_logger
 
-class HTMLExtractor(ExtractorABC):
+logger = get_logger(__name__)
+
+class TrafilaturaExtractor(BaseExtractor):
     def extract(self, html: str, url: str) -> Dict[str, Any]:
         soup = BeautifulSoup(html, "lxml")
         
@@ -30,6 +33,7 @@ class HTMLExtractor(ExtractorABC):
         # Extract main content
         content = trafilatura.extract(html, include_links=False, include_images=False, include_formatting=False)
         if not content:
+            logger.debug(f"Trafilatura failed to extract main content for {url}, falling back to simple text")
             # Fallback to simple text extraction if trafilatura fails
             content = soup.get_text(separator="\n", strip=True)
             
@@ -44,9 +48,12 @@ class HTMLExtractor(ExtractorABC):
         # Extract images
         images: List[Dict[str, str]] = []
         for img in soup.find_all("img", src=True):
-            src = urljoin(url, img["src"].strip())
-            alt = img.get("alt", "").strip() or None
-            images.append({"src": src, "alt": alt})
+            if "src" in img.attrs:
+                src = urljoin(url, img["src"].strip())
+                alt = img.get("alt", "").strip() or None
+                images.append({"src": src, "alt": alt})
+        
+        logger.debug(f"Extracted {len(headings)} headings, {len(links)} links, {len(images)} images for {url}")
             
         return {
             "title": title,

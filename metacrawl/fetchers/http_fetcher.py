@@ -1,12 +1,16 @@
 import aiohttp
 import asyncio
 from typing import Tuple, Optional
-from .interfaces import FetcherABC
+from .base import BaseFetcher
+from metacrawl.config.settings import settings
+from metacrawl.utils.logger import get_logger
 
-class AsyncFetcher(FetcherABC):
-    def __init__(self, user_agent: str = "MetaCrawl/1.0", timeout_seconds: int = 15):
-        self.user_agent = user_agent
-        self.timeout_seconds = timeout_seconds
+logger = get_logger(__name__)
+
+class HttpFetcher(BaseFetcher):
+    def __init__(self, user_agent: str = None, timeout_seconds: int = None):
+        self.user_agent = user_agent or settings.user_agent
+        self.timeout_seconds = timeout_seconds or settings.timeout
 
     async def fetch(self, url: str) -> Tuple[Optional[str], int, Optional[str], str]:
         headers = {"User-Agent": self.user_agent}
@@ -19,15 +23,18 @@ class AsyncFetcher(FetcherABC):
                     final_url = str(response.url)
                     
                     if 200 <= status < 300:
-                        # Success
+                        logger.debug(f"Successfully fetched {final_url} (status: {status})")
                         html = await response.text()
                         return html, status, None, final_url
                     else:
-                        # HTTP Error
+                        logger.warning(f"HTTP Error {status} fetching {final_url}: {response.reason}")
                         return None, status, f"HTTP {status}: {response.reason}", final_url
         except asyncio.TimeoutError:
+            logger.warning(f"Request timed out fetching {url} after {self.timeout_seconds}s")
             return None, 408, "Request timed out", url
         except aiohttp.ClientError as e:
+            logger.error(f"Client error fetching {url}: {e}")
             return None, 500, f"Client error: {str(e)}", url
         except Exception as e:
+            logger.exception(f"Unexpected error fetching {url}: {e}")
             return None, 500, f"Unexpected error: {str(e)}", url

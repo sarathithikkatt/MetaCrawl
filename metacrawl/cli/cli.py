@@ -1,16 +1,19 @@
 import argparse
 import asyncio
 import json
-from .pipeline import CrawlerPipeline
+from metacrawl.utils.helpers import get_configured_pipeline
+from metacrawl.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 async def main_async(urls, json_output, max_topics):
-    pipeline = CrawlerPipeline()
+    pipeline = get_configured_pipeline()
     results = []
     
     # Process sequentially for demonstration.
     for url in urls:
         if not json_output:
-            print(f"Crawling {url}...")
+            logger.info(f"Initiating CLI crawl for {url}")
         try:
             data = await pipeline.process_url(url)
             dump = data.model_dump()
@@ -27,7 +30,7 @@ async def main_async(urls, json_output, max_topics):
                 print("-" * 40)
         except Exception as e:
             if not json_output:
-                print(f"Failed processing {url}: {e}")
+                logger.error(f"Failed processing {url} from CLI: {e}")
             
     if json_output:
         print(json.dumps(results, indent=2))
