@@ -18,6 +18,9 @@ python -m venv .venv
 
 # Install the package and its dependencies
 pip install -e .
+
+# Install headless browser binaries for Playwright fallback
+playwright install
 ```
 
 ### 2. Usage

@@ -28,6 +28,8 @@ The `CrawlerPipeline` itself takes completely built instances of `BaseFetcher`, 
 ### Network Fetchers
 Implemented abstractly over `BaseFetcher`. The main implementation is `HttpFetcher` (powered by `aiohttp`), securely loading connection `timeouts` and custom `user_agents` implicitly mapped via the environment configuration.
 
+Additionally, a `PlaywrightFetcher` is included which acts as an automatic fallback mechanism when `HttpFetcher` encounters a `403 Forbidden` response, enabling robust extraction for JS-heavy or protected sites. This behavior can be toggled via `settings.use_playwright_fallback`.
+
 ### Content Extractors
 `BaseExtractor` allows stringing complex parsers. Included implementations:
 - `TrafilaturaExtractor`: Strips aggressive boilerplate off a target site relying cleanly upon DOM clustering logic.
