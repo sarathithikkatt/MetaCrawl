@@ -20,5 +20,8 @@ COPY . /app/
 # Install the project
 RUN pip install --no-cache-dir -e .
 
+# Install Playwright browsers and their system dependencies
+RUN playwright install --with-deps chromium
+
 # Define the entrypoint so it acts as a CLI
 ENTRYPOINT ["python", "main.py"]

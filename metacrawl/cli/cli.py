@@ -1,13 +1,25 @@
+import sys
 import argparse
 import asyncio
 import json
+import logging
+
+# On Windows, Playwright requires ProactorEventLoop to work correctly with asyncio.
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 from metacrawl.utils.helpers import get_configured_pipeline
 from metacrawl.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-async def main_async(urls, json_output, max_topics):
-    logger.debug(f"CLI args: urls={urls}, json={json_output}, max_topics={max_topics}")
+async def main_async(urls, json_output, max_topics, debug=False):
+    if debug:
+        logger.setLevel(logging.DEBUG)
+        for handler in logger.handlers:
+            handler.setLevel(logging.DEBUG)
+            
+    logger.debug(f"CLI args: urls={urls}, json={json_output}, max_topics={max_topics}, debug={debug}")
     pipeline = get_configured_pipeline()
     results = []
     
@@ -28,6 +40,13 @@ async def main_async(urls, json_output, max_topics):
             if json_output:
                 results.append(dump)
             else:
+                if data.error:
+                    print(f"\033[91mError crawling {url}: {data.error}\033[0m", file=sys.stderr)
+                    if data.status_code:
+                        print(f"Status Code: {data.status_code}", file=sys.stderr)
+                    print("-" * 40, file=sys.stderr)
+                    continue
+
                 print(f"Domain: {dump['domain']}")
                 print(f"Page Type: {dump['page_type']}")
                 print(f"Title: {dump['title']}")
@@ -36,7 +55,16 @@ async def main_async(urls, json_output, max_topics):
                 print(f"Headings Found: {len(dump['headings'])}")
                 print("-" * 40)
         except Exception as e:
-            logger.error(f"Failed processing {url} from CLI: {e}", exc_info=True)
+            logger.error(f"Failed processing {url} from CLI: {e}", exc_info=debug)
+            if json_output:
+                results.append({
+                    "url": url,
+                    "error": str(e),
+                    "status_code": 500
+                })
+            else:
+                print(f"\033[91mUnexpected error crawling {url}: {e}\033[0m", file=sys.stderr)
+                print("-" * 40, file=sys.stderr)
             
     logger.info(f"CLI crawl complete — processed {len(urls)} URL(s)")
     if json_output:
@@ -47,9 +75,10 @@ def main():
     parser.add_argument("urls", nargs="+", help="URLs to crawl")
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
     parser.add_argument("--max-topics", type=int, default=5, help="Max topics to print in non-json mode")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
     
-    asyncio.run(main_async(args.urls, args.json, args.max_topics))
+    asyncio.run(main_async(args.urls, args.json, args.max_topics, args.debug))
 
 if __name__ == "__main__":
     main()
