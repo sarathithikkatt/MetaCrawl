@@ -8,7 +8,9 @@ class Settings(BaseSettings):
     user_agent: str = "MetaCrawl/2.0"
     
     # Feature toggles
-    use_playwright: bool = False
+    use_playwright_fallback: bool = True
+    playwright_timeout: int = 30
+    headless: bool = True
     
     # Extractor choice
     extractor_type: Literal["trafilatura", "basic"] = "trafilatura"

@@ -15,11 +15,13 @@ class CrawlerPipeline:
                  fetcher: BaseFetcher,
                  extractor: BaseExtractor,
                  classifier: BaseClassifier,
-                 topic_extractor: BaseTopicExtractor):
+                 topic_extractor: BaseTopicExtractor,
+                 fallback_fetcher: Optional[BaseFetcher] = None):
         self.fetcher = fetcher
         self.extractor = extractor
         self.classifier = classifier
         self.topic_extractor = topic_extractor
+        self.fallback_fetcher = fallback_fetcher
         
     async def process_url(self, url: str) -> CrawledData:
         domain = urlparse(url).netloc
@@ -28,6 +30,13 @@ class CrawlerPipeline:
         # 1. Fetch
         logger.debug(f"Fetching HTML for {url}...")
         html, status, error, final_url = await self.fetcher.fetch(url)
+        
+        # Check for 403 and fallback fetcher configured
+        if status == 403 and self.fallback_fetcher:
+            logger.warning(f"Fetch failed with 403 FORBIDDEN. Retrying using Playwright fallback...")
+            html, status, error, final_url = await self.fallback_fetcher.fetch(url)
+            if not error and html:
+                logger.info(f"Playwright fallback succeeded for {url}")
         
         if error or not html:
             logger.warning(f"Fetch failed for {url} with status {status}: {error}")
