@@ -20,3 +20,9 @@ class CrawledData(BaseModel):
     # Metadata about the fetch itself
     status_code: int = 200
     error: Optional[str] = None
+
+class ErrorResponse(BaseModel):
+    error: str
+    status_code: int = 500
+    url: Optional[str] = None
+    detail: Optional[str] = None
