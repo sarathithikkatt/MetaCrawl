@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, HttpUrl
 from metacrawl.utils.helpers import get_configured_pipeline
@@ -6,7 +8,16 @@ from metacrawl.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-app = FastAPI(title="MetaCrawl API", version="2.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application startup / shutdown lifecycle."""
+    logger.info("MetaCrawl API server starting up")
+    yield
+    logger.info("MetaCrawl API server shutting down")
+
+
+app = FastAPI(title="MetaCrawl API", version="2.0.0", lifespan=lifespan)
 pipeline = get_configured_pipeline()
 
 class CrawlRequest(BaseModel):
@@ -30,4 +41,5 @@ async def crawl_endpoint(request: CrawlRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("metacrawl.api.app:app", host="0.0.0.0", port=8000, reload=True)
+    # log_config=None prevents uvicorn from overriding our logging setup
+    uvicorn.run("metacrawl.api.app:app", host="0.0.0.0", port=8000, reload=True, log_config=None)

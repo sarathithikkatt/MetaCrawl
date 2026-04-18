@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     user_agent: str = "MetaCrawl/2.0"
     
     # Feature toggles
-    use_playwright_fallback: bool = True
+    use_playwright_fallback: bool = False
     playwright_timeout: int = 30
     headless: bool = True
     
@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     
     # Logging
     log_level: str = "INFO"
+    log_dir: str = "logs"
 
     model_config = SettingsConfigDict(env_prefix="METACRAWL_", env_file=".env", env_file_encoding="utf-8")
 

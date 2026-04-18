@@ -9,18 +9,23 @@ logger = get_logger(__name__)
 
 class TrafilaturaExtractor(BaseExtractor):
     def extract(self, html: str, url: str) -> Dict[str, Any]:
+        logger.debug(f"Starting trafilatura extraction for {url}")
         soup = BeautifulSoup(html, "lxml")
         
         # Extract title
         title = None
         if soup.title and soup.title.string:
             title = soup.title.string.strip()
+        if not title:
+            logger.warning(f"No <title> found for {url}")
             
         # Extract description
         description = None
         meta_desc = soup.find("meta", attrs={"name": "description"}) or soup.find("meta", attrs={"property": "og:description"})
         if meta_desc and meta_desc.get("content"):
             description = meta_desc.get("content", "").strip()
+        else:
+            logger.debug(f"No meta description found for {url}")
             
         # Extract headings
         headings: List[str] = []
@@ -33,7 +38,7 @@ class TrafilaturaExtractor(BaseExtractor):
         # Extract main content
         content = trafilatura.extract(html, include_links=False, include_images=False, include_formatting=False)
         if not content:
-            logger.debug(f"Trafilatura failed to extract main content for {url}, falling back to simple text")
+            logger.warning(f"Trafilatura failed to extract main content for {url}, falling back to simple text")
             # Fallback to simple text extraction if trafilatura fails
             content = soup.get_text(separator="\n", strip=True)
             
