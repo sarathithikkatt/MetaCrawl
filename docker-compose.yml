@@ -1,0 +1,9 @@
+services:
+  metacrawl-api:
+    build: .
+    entrypoint: ["uvicorn", "metacrawl.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    environment:
+      - METACRAWL_LOG_LEVEL=DEBUG
+      - METACRAWL_EXTRACTOR_TYPE=trafilatura

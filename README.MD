@@ -24,43 +24,80 @@ pip install -e .
 
 Once installed, you can use the command-line interface out of the box to test against any live URLs.
 
-**Basic Usage:**
+**Basic CLI Usage:**
 ```bash
-python -m metacrawl.cli https://en.wikipedia.org/wiki/Web_crawler
+python main.py https://en.wikipedia.org/wiki/Web_crawler
 ```
 This will print a high-level summary of the page including Domain, Page Type, Title, and Topics extracted.
 
 **JSON Output:**
 To get the fully structured dataset (which includes the full content, heading list, and identified links/images), use the `--json` flag:
 ```bash
-python -m metacrawl.cli https://news.ycombinator.com/ --json
+python main.py https://news.ycombinator.com/ --json
 ```
 
-**Multiple URLs:**
-You can pass multiple URLs sequentially:
+---
+
+## 🐳 Docker Execution
+
+You can run MetaCrawl entirely via Docker without installing Python locally.
+
 ```bash
-python -m metacrawl.cli https://github.blog/ https://scrapeme.live/shop/Bulbasaur/
+# Build the image
+docker build -t metacrawl .
+
+# Run the CLI inside Docker
+docker run metacrawl "https://github.blog"
 ```
+
+## 🌐 API Mode (FastAPI)
+
+MetaCrawl includes a built-in FastAPI application for API usage. Spin it up using Docker Compose:
+
+```bash
+docker compose up --build
+```
+This serves the application on `http://localhost:8000`. 
+You can test the endpoint:
+```bash
+curl -X POST "http://localhost:8000/crawl" -H "Content-Type: application/json" -d '{"url":"https://example.com"}'
+```
+
+---
+
+## ⚙️ Configuration
+
+MetaCrawl is managed using `pydantic-settings`. Configs are read from environment variables matching the `METACRAWL_` prefix.
+
+| Env Variable | Description |
+| :--- | :--- |
+| `METACRAWL_TIMEOUT` | Networking max timeout |
+| `METACRAWL_EXTRACTOR_TYPE` | Either `trafilatura` (advanced) or `basic` (fallback parsing) |
+| `METACRAWL_LOG_LEVEL` | Application logging (`INFO`, `DEBUG`) |
+
 
 ## 📂 Project Structure
 
 ```text
 MetaCrawl/
-├── pyproject.toml              # Dependencies and package configuration
+├── Dockerfile                  # Container definition
+├── docker-compose.yml          # Fast API spin-up config
+├── pyproject.toml              # Dependencies config
+├── main.py                     # Root CLI entry target
 ├── README.MD                   # Project overview & Setup
-├── DOCUMENTATION.md            # In-depth architectural details
-└── src/
-    └── metacrawl/
-        ├── __init__.py         # Package init
-        ├── cli.py              # CLI entry point
-        ├── pipeline.py         # Main orchestrator (CrawlerPipeline)
-        ├── models.py           # Pydantic data schemas
-        ├── interfaces.py       # Abstract Base Classes (ABCs)
-        ├── fetcher.py          # HTTP networking layer (aiohttp)
-        ├── extractor.py        # DOM/Content Parsing (Trafilatura & BeautifulSoup)
-        ├── classifier.py       # Heuristic page type classification
-        └── topics.py           # Unsupervised Topic Extraction (TF-IDF)
+├── DOCUMENTATION.md            # Architectural detail
+└── metacrawl/
+    ├── api/                    # FastAPI routes
+    ├── cli/                    # Argparse CLI builder
+    ├── classifiers/            # Heuristic and structural detectors via BaseClassifier
+    ├── config/                 # Pydantic Settings base
+    ├── extractors/             # HTML data extraction via BaseExtractor
+    ├── fetchers/               # HTTP clients via BaseFetcher
+    ├── models/                 # Shared Data Schemas
+    ├── pipeline/               # Injection logic orchestration
+    ├── topics/                 # TF-IDF Topic detection via BaseTopicExtractor
+    └── utils/                  # Factory bindings and DI logic
 ```
 
 ## 📚 Learn More
-To learn more about the code architecture, how to write your own `Fetchers` using Playwright, or how to swap in a Machine Learning model for the `Classifier`, please read the detailed [DOCUMENTATION.md](DOCUMENTATION.md) included in this repository.
+To learn more about the code architecture, how to plug in alternative Fetchers or Classifiers, read the detailed [DOCUMENTATION.md](DOCUMENTATION.md).
