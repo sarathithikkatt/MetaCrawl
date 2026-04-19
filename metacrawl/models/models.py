@@ -8,7 +8,7 @@ class ImageMeta(BaseModel):
 class CrawledData(BaseModel):
     url: str
     domain: str
-    page_type: str = "other"  # article, product, category/list, homepage, other
+    page_type: str = "other"  # article, product, category/list, homepage, challenge, other
     title: Optional[str] = None
     description: Optional[str] = None
     canonical_url: Optional[str] = None

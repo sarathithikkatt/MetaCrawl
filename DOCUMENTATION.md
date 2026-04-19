@@ -19,7 +19,7 @@ Inside each sub-directory, a unified `base.py` guarantees the typing boundaries 
 The pipeline securely passes a validated `CrawledData` Pydantic model everywhere instead of fragile dicts.
 
 ### Pipeline Injection (`metacrawl/pipeline/pipeline.py`)
-The `CrawlerPipeline` itself takes completely built instances of `BaseFetcher`, `BaseExtractor`, etc. It has absolutely zero concept of *how* these act, it only strings their responses together and monitors fail states gracefully.
+The `CrawlerPipeline` itself takes completely built instances of `BaseFetcher`, `BaseExtractor`, etc. It has absolutely zero concept of *how* these act, it only strings their responses together and monitors fail states gracefully. It also handles advanced **Challenge/Bot Detection** logic by automatically retrying pages classified as challenges using the configured fallback fetcher.
 
 ---
 
@@ -36,7 +36,7 @@ Additionally, a `PlaywrightFetcher` is included which acts as an automatic fallb
 - `BasicExtractor`: The fallback safety implementation dropping everything from standard `bs4` nodes directly into the string.
 
 ### Heuristic Classifier
-Categorizes inputs utilizing link density, regex heuristics, and keyword triggers (`category/list`, `product`, `article`). Fully encapsulated in `classifiers/`.
+Categorizes inputs utilizing link density, regex heuristics, and keyword triggers (`category/list`, `product`, `article`, `challenge`). The `challenge` type specifically detects bot-detection screens like Amazon's "continue shopping" or Captchas. Fully encapsulated in `classifiers/`.
 
 ### Topic Extractor
 Uses `Scikit-Learn`'s `TfidfVectorizer` loaded via `topics/tfidf_extractor.py` ensuring localized NLP logic doesn't bleed into core parsers.

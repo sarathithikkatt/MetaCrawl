@@ -106,6 +106,7 @@ class CrawlerPipeline:
         logger.debug(f"Extracting content from {final_url}...")
         try:
             extracted = self.extractor.extract(html, final_url)
+            extracted["url"] = final_url  # Pass URL to classifier
         except Exception as e:
             logger.error(f"Extraction error on {final_url}: {e}")
             return CrawledData(
@@ -123,8 +124,24 @@ class CrawlerPipeline:
         except Exception as e:
             logger.error(f"Classification error on {final_url}: {e}")
             page_type = "other"
+
+        # 4. Handle Bot Detection / Challenge (Retry with fallback if needed)
+        if page_type == "challenge" and self.fallback_fetcher:
+            logger.warning(f"Challenge page detected (bot detection) for {final_url}. Retrying with Playwright fallback...")
+            html, status, error, final_url = await self.fallback_fetcher.fetch(url)
+            if not error and html:
+                logger.info(f"Playwright fallback succeeded after challenge for {url}")
+                real_domain = urlparse(final_url).netloc
+                try:
+                    extracted = self.extractor.extract(html, final_url)
+                    extracted["url"] = final_url
+                    page_type = self.classifier.classify(extracted)
+                except Exception as e:
+                    logger.error(f"Post-fallback extraction/classification error: {e}")
+            else:
+                logger.warning(f"Playwright fallback also failed or returned challenge for {url}")
             
-        # 4. Extract Topics
+        # 5. Extract Topics
         topics = []
         try:
             if extracted.get("content"):

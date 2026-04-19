@@ -21,6 +21,24 @@ class HeuristicClassifier(BaseClassifier):
         title_lower = title.lower()
         all_headings = " ".join(headings).lower()
         
+        # Challenge/Bot detection heuristics
+        challenge_keywords = [
+             "continue shopping", 
+             "bot detection", 
+             "captcha", 
+             "robot check", 
+             "not a robot",
+             "verify you are a human",
+             "access denied",
+             "automation tools",
+             "checking your browser",
+             "enable javascript and cookies to continue"
+         ]
+        if any(kw in content_lower for kw in challenge_keywords) or \
+            (url := extracted_data.get("url", "")) and "amazon" in url.lower() and "continue shopping" in content_lower:
+             logger.debug(f"Classified as 'challenge' — bot detection detected")
+             return "challenge"
+
         # Product heuristics
         product_keywords = ["add to cart", "buy now", "in stock", "add to basket", "sku", "shipping"]
         product_score = sum(1 for kw in product_keywords if kw in content_lower or kw in all_headings)

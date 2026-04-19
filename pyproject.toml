@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metacrawl"
-version = "0.1.0"
+version = "0.1.1"
 description = "A modular web crawling and content extraction system"
 authors = [
     {name = "sarathithikkatt", email = "sarathithikkatt@gmail.com"}

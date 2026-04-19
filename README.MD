@@ -8,6 +8,7 @@
 - **🛡️ Stealth Fetching**: Integrates `playwright-stealth` to bypass basic bot detection and scraping protections.
 - **🧩 Modular Extractors**: Support for both `trafilatura` (advanced content extraction) and a `basic` BeautifulSoup-based fallback.
 - **🏷️ Smart Classification**: Automatic page type detection (Article, Product, Homepage, etc.) using heuristic analysis.
+- **🛡️ Challenge Handling**: Automated detection of bot-protection pages (Amazon challenge, Captchas, etc.) with automatic Playwright-based retries.
 - **🧠 Topic Extraction**: NLP-driven topic identification via TF-IDF and scikit-learn.
 - **🌐 FastAPI Ready**: Includes a production-ready HTTP API for remote crawling tasks.
 
