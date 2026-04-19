@@ -9,6 +9,7 @@
 - **🧩 Modular Extractors**: Support for both `trafilatura` (advanced content extraction) and a `basic` BeautifulSoup-based fallback.
 - **🏷️ Smart Classification**: Automatic page type detection (Article, Product, Homepage, etc.) using heuristic analysis.
 - **🛡️ Challenge Handling**: Automated detection of bot-protection pages (Amazon challenge, Captchas, etc.) with automatic Playwright-based retries.
+- **🤖 Robots.txt & Rate Limiting**: Built-in support for `robots.txt` compliance and domain-based rate limiting to ensure polite crawling.
 - **🧠 Topic Extraction**: NLP-driven topic identification via TF-IDF and scikit-learn.
 - **🌐 FastAPI Ready**: Includes a production-ready HTTP API for remote crawling tasks.
 
@@ -93,6 +94,7 @@ MetaCrawl is managed using `pydantic-settings`. Configs are read from environmen
 | `METACRAWL_TIMEOUT` | `15` | Networking max timeout (seconds) |
 | `METACRAWL_EXTRACTOR_TYPE` | `trafilatura` | Either `trafilatura` (advanced) or `basic` (fallback parsing) |
 | `METACRAWL_LOG_LEVEL` | `INFO` | Application logging (`INFO`, `DEBUG`, `WARNING`) |
+| `METACRAWL_RATE_LIMIT_DELAY` | `1.0` | Seconds to wait between requests to the same domain |
 | `METACRAWL_HEADLESS` | `True` | Run Playwright in headless mode |
 | `METACRAWL_USE_PLAYWRIGHT_FALLBACK` | `True` | Enable Playwright if HTTP fetch fails or returns 403 |
 | `METACRAWL_USER_AGENT` | (Standard) | Custom User-Agent string |

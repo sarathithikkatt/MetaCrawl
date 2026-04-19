@@ -18,7 +18,7 @@ The primary output model returned by `CrawlerPipeline.process_url()`.
 |:---|:---|:---|:---|
 | `url` | `str` | — | Final URL after redirects |
 | `domain` | `str` | — | Extracted domain (e.g. `en.wikipedia.org`) |
-| `page_type` | `str` | `"other"` | Classifier result: `article`, `product`, `homepage`, `category/list`, `other` |
+| `page_type` | `str` | `"other"` | Classifier result: `article`, `product`, `homepage`, `category/list`, `challenge`, `other` |
 | `title` | `str \| None` | `None` | Page `<title>` tag content |
 | `description` | `str \| None` | `None` | Meta description or OG description |
 | `headings` | `List[str]` | `[]` | h1/h2/h3 heading text |

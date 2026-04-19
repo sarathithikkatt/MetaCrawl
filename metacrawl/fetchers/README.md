@@ -33,7 +33,7 @@ The pipeline does **not** handle fallback logic inside the fetcher. Instead, `Cr
 | Setting | Default | Description |
 |:---|:---|:---|
 | `METACRAWL_TIMEOUT` | `15` | `HttpFetcher` request timeout (seconds) |
-| `METACRAWL_USER_AGENT` | `MetaCrawl/2.0` | User-Agent header string |
+| `METACRAWL_USER_AGENT` | (Chrome 120) | Modern Chrome User-Agent header string |
 | `METACRAWL_USE_PLAYWRIGHT_FALLBACK` | `True` | Enable/disable Playwright 403 fallback |
 | `METACRAWL_PLAYWRIGHT_TIMEOUT` | `30` | Playwright page load timeout (seconds) |
 | `METACRAWL_HEADLESS` | `True` | Run Playwright in headless mode |

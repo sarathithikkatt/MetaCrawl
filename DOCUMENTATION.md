@@ -19,16 +19,19 @@ Inside each sub-directory, a unified `base.py` guarantees the typing boundaries 
 The pipeline securely passes a validated `CrawledData` Pydantic model everywhere instead of fragile dicts.
 
 ### Pipeline Injection (`metacrawl/pipeline/pipeline.py`)
-The `CrawlerPipeline` itself takes completely built instances of `BaseFetcher`, `BaseExtractor`, etc. It has absolutely zero concept of *how* these act, it only strings their responses together and monitors fail states gracefully. It also handles advanced **Challenge/Bot Detection** logic by automatically retrying pages classified as challenges using the configured fallback fetcher.
+The `CrawlerPipeline` itself takes completely built instances of `BaseFetcher`, `BaseExtractor`, etc. It has absolutely zero concept of *how* these act, it only strings their responses together and monitors fail states gracefully. It also handles:
+- **Challenge/Bot Detection**: Automatically retries pages classified as challenges using the configured fallback fetcher.
+- **Robots.txt Compliance**: Automatically checks `/robots.txt` for each domain before fetching.
+- **Domain Rate Limiting**: Ensures a configurable delay between requests to the same domain.
 
 ---
 
 ## 2. Component Deep Dive
 
 ### Network Fetchers
-Implemented abstractly over `BaseFetcher`. The main implementation is `HttpFetcher` (powered by `aiohttp`), securely loading connection `timeouts` and custom `user_agents` implicitly mapped via the environment configuration.
+Implemented abstractly over `BaseFetcher`. The main implementation is `HttpFetcher` (powered by `aiohttp`), securely loading connection `timeouts` and custom `user_agents` (defaults to a modern Chrome UA) implicitly mapped via the environment configuration.
 
-Additionally, a `PlaywrightFetcher` is included which acts as an automatic fallback mechanism when `HttpFetcher` encounters a `403 Forbidden` response, enabling robust extraction for JS-heavy or protected sites. This behavior can be toggled via `settings.use_playwright_fallback`.
+Additionally, a `PlaywrightFetcher` is included which acts as an automatic fallback mechanism when `HttpFetcher` encounters a `403 Forbidden` response or when a **challenge/bot detection** page is detected. This behavior can be toggled via `settings.use_playwright_fallback`.
 
 ### Content Extractors
 `BaseExtractor` allows stringing complex parsers. Included implementations:
@@ -36,7 +39,12 @@ Additionally, a `PlaywrightFetcher` is included which acts as an automatic fallb
 - `BasicExtractor`: The fallback safety implementation dropping everything from standard `bs4` nodes directly into the string.
 
 ### Heuristic Classifier
-Categorizes inputs utilizing link density, regex heuristics, and keyword triggers (`category/list`, `product`, `article`, `challenge`). The `challenge` type specifically detects bot-detection screens like Amazon's "continue shopping" or Captchas. Fully encapsulated in `classifiers/`.
+Categorizes inputs utilizing link density, regex heuristics, and keyword triggers (`category/list`, `product`, `article`, `challenge`, `homepage`). 
+- **Challenge Detection**: Specifically identifies bot-protection screens (Amazon "continue shopping", Captchas, etc.), triggering the pipeline's fallback retry mechanism.
+- **Product Detection**: Scoring-based detection for e-commerce product pages.
+- **Homepage/Article/List**: Structural heuristics based on content length and link density.
+
+Fully encapsulated in `classifiers/`.
 
 ### Topic Extractor
 Uses `Scikit-Learn`'s `TfidfVectorizer` loaded via `topics/tfidf_extractor.py` ensuring localized NLP logic doesn't bleed into core parsers.
