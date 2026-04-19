@@ -11,6 +11,7 @@ class CrawledData(BaseModel):
     page_type: str = "other"  # article, product, category/list, homepage, other
     title: Optional[str] = None
     description: Optional[str] = None
+    canonical_url: Optional[str] = None
     headings: List[str] = Field(default_factory=list)
     content: str = ""
     topics: List[str] = Field(default_factory=list)

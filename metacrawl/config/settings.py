@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     timeout: int = 15
     max_retries: int = 3
     user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    rate_limit_delay: float = 1.0  # Seconds between requests to the same domain
     
     # Feature toggles
     use_playwright_fallback: bool = True

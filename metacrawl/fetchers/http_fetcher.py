@@ -22,6 +22,11 @@ class HttpFetcher(BaseFetcher):
                     status = response.status
                     final_url = str(response.url)
                     
+                    content_type = response.headers.get("Content-Type", "").lower()
+                    if "text/html" not in content_type and "application/xhtml+xml" not in content_type:
+                        logger.warning(f"Skipping non-HTML content type: {content_type} for {final_url}")
+                        return None, 415, f"Unsupported Content-Type: {content_type}", final_url
+
                     if 200 <= status < 300:
                         logger.debug(f"Successfully fetched {final_url} (status: {status})")
                         html = await response.text()

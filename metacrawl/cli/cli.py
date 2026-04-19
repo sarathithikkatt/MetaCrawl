@@ -20,6 +20,14 @@ async def main_async(urls, json_output, max_topics, debug=False):
             handler.setLevel(logging.DEBUG)
             
     logger.debug(f"CLI args: urls={urls}, json={json_output}, max_topics={max_topics}, debug={debug}")
+    
+    # Deduplicate URLs while preserving order
+    original_count = len(urls)
+    seen = set()
+    urls = [x for x in urls if not (x in seen or seen.add(x))]
+    if len(urls) < original_count:
+        logger.info(f"Deduplicated URLs: {original_count} -> {len(urls)}")
+
     pipeline = get_configured_pipeline()
     results = []
     

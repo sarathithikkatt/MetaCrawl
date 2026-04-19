@@ -17,6 +17,9 @@ class BasicExtractor(BaseExtractor):
         
         meta_desc = soup.find("meta", attrs={"name": "description"}) or soup.find("meta", attrs={"property": "og:description"})
         description = meta_desc.get("content", "").strip() if meta_desc and meta_desc.get("content") else None
+        
+        canonical_tag = soup.find("link", rel="canonical")
+        canonical_url = urljoin(url, canonical_tag["href"].strip()) if canonical_tag and canonical_tag.get("href") else None
             
         headings: List[str] = []
         for tag in ["h1", "h2", "h3"]:
@@ -48,6 +51,7 @@ class BasicExtractor(BaseExtractor):
         return {
             "title": title,
             "description": description,
+            "canonical_url": canonical_url,
             "headings": headings,
             "content": content,
             "links": list(links),
