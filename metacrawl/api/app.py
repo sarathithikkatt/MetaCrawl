@@ -1,12 +1,4 @@
-import sys
-import asyncio
 from contextlib import asynccontextmanager
-
-# On Windows, Playwright requires ProactorEventLoop to work correctly with asyncio.
-# Python 3.8+ uses it by default, but we set it explicitly to avoid NotImplementedError
-# in some environments or when running through certain launchers.
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse

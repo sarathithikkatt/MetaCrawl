@@ -1,5 +1,5 @@
-from pydantic import BaseModel, HttpUrl, Field
-from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, Field
+from typing import Optional
 
 class ImageMeta(BaseModel):
     src: str
@@ -12,11 +12,11 @@ class CrawledData(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     canonical_url: Optional[str] = None
-    headings: List[str] = Field(default_factory=list)
+    headings: list[str] = Field(default_factory=list)
     content: str = ""
-    topics: List[str] = Field(default_factory=list)
-    links: List[str] = Field(default_factory=list)
-    images: List[ImageMeta] = Field(default_factory=list)
+    topics: list[str] = Field(default_factory=list)
+    links: list[str] = Field(default_factory=list)
+    images: list[ImageMeta] = Field(default_factory=list)
     
     # Metadata about the fetch itself
     status_code: int = 200

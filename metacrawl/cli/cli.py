@@ -4,10 +4,6 @@ import asyncio
 import json
 import logging
 
-# On Windows, Playwright requires ProactorEventLoop to work correctly with asyncio.
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
 from metacrawl.utils.helpers import get_configured_pipeline
 from metacrawl.utils.logger import get_logger
 

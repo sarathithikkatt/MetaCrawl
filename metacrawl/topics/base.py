@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 class BaseTopicExtractor(ABC):
     """
     Abstract interface for extracting key topics from raw text.
     """
     @abstractmethod
-    def extract_topics(self, text: str, max_topics: int = 5) -> List[str]:
+    def extract_topics(self, text: str, max_topics: int = 5) -> list[str]:
         """
         Extract topics from the main content.
         

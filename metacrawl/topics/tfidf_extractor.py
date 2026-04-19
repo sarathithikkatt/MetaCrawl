@@ -1,4 +1,3 @@
-from typing import List
 from sklearn.feature_extraction.text import TfidfVectorizer
 from .base import BaseTopicExtractor
 from metacrawl.utils.logger import get_logger
@@ -6,7 +5,7 @@ from metacrawl.utils.logger import get_logger
 logger = get_logger(__name__)
 
 class TFIDFTopicExtractor(BaseTopicExtractor):
-    def extract_topics(self, text: str, max_topics: int = 5) -> List[str]:
+    def extract_topics(self, text: str, max_topics: int = 5) -> list[str]:
         if not text or len(text.split()) < 10:
             logger.warning(f"Text too short for topic extraction ({len((text or '').split())} words), skipping")
             return []

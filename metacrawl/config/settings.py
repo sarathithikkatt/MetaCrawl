@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     rate_limit_delay: float = 1.0  # Seconds between requests to the same domain
     
     # Feature toggles
+    check_robots_txt: bool = True
     use_playwright_fallback: bool = True
     playwright_timeout: int = 30
     headless: bool = True
