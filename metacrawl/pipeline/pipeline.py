@@ -29,14 +29,16 @@ class CrawlerPipeline:
         
         # 1. Fetch
         logger.debug(f"Fetching HTML for {url}...")
-        html, status, error, final_url = await self.fetcher.fetch(url)
+        html, status, error, final_url = await self.fallback_fetcher.fetch(url)
+
+        # html, status, error, final_url = await self.fetcher.fetch(url)
         
-        # Check for 403 and fallback fetcher configured
-        if status == 403 and self.fallback_fetcher:
-            logger.warning(f"Fetch failed with 403 FORBIDDEN. Retrying using Playwright fallback...")
-            html, status, error, final_url = await self.fallback_fetcher.fetch(url)
-            if not error and html:
-                logger.info(f"Playwright fallback succeeded for {url}")
+        # # Check for 403 and fallback fetcher configured
+        # if status == 403 and self.fallback_fetcher:
+        #     logger.warning(f"Fetch failed with 403 FORBIDDEN. Retrying using Playwright fallback...")
+        #     html, status, error, final_url = await self.fallback_fetcher.fetch(url)
+        #     if not error and html:
+        #         logger.info(f"Playwright fallback succeeded for {url}")
         
         if error or not html:
             logger.warning(f"Fetch failed for {url} with status {status}: {error}")

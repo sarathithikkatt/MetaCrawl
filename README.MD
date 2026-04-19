@@ -38,6 +38,7 @@ To get the fully structured dataset (which includes the full content, heading li
 ```bash
 python main.py https://news.ycombinator.com/ --json
 ```
+python main.py https://www.rei.com/blog/camp/how-to-introduce-your-indoorsy-friend-to-the-outdoors
 
 ---
 
