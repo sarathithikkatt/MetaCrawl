@@ -26,6 +26,10 @@ class TrafilaturaExtractor(BaseExtractor):
             description = meta_desc.get("content", "").strip()
         else:
             logger.debug(f"No meta description found for {url}")
+
+        # Extract canonical URL
+        canonical_tag = soup.find("link", rel="canonical")
+        canonical_url = urljoin(url, canonical_tag["href"].strip()) if canonical_tag and canonical_tag.get("href") else None
             
         # Extract headings
         headings: List[str] = []
@@ -63,6 +67,7 @@ class TrafilaturaExtractor(BaseExtractor):
         return {
             "title": title,
             "description": description,
+            "canonical_url": canonical_url,
             "headings": headings,
             "content": content,
             "links": list(links),
