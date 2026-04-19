@@ -2,6 +2,15 @@
 
 **MetaCrawl** is a robust, modular, and extensible web crawling and content extraction system. Built entirely in Python using modern async tools, it is designed to take any URL and convert its page content into a clean, structured JSON format containing text, topics, type classification, and parsed metadata.
 
+## ✨ Key Features
+
+- **🚀 Async Architecture**: Built on `asyncio` and `aiohttp` for high-performance concurrent crawling.
+- **🛡️ Stealth Fetching**: Integrates `playwright-stealth` to bypass basic bot detection and scraping protections.
+- **🧩 Modular Extractors**: Support for both `trafilatura` (advanced content extraction) and a `basic` BeautifulSoup-based fallback.
+- **🏷️ Smart Classification**: Automatic page type detection (Article, Product, Homepage, etc.) using heuristic analysis.
+- **🧠 Topic Extraction**: NLP-driven topic identification via TF-IDF and scikit-learn.
+- **🌐 FastAPI Ready**: Includes a production-ready HTTP API for remote crawling tasks.
+
 ## 🚀 Quick Start
 
 ### 1. Installation
@@ -19,8 +28,8 @@ python -m venv .venv
 # Install the package and its dependencies
 pip install -e .
 
-# Install headless browser binaries for Playwright fallback
-playwright install
+# Install Chromium binaries for Playwright fallback
+playwright install chromium
 ```
 
 ### 2. Usage
@@ -34,11 +43,16 @@ python main.py https://en.wikipedia.org/wiki/Web_crawler
 This will print a high-level summary of the page including Domain, Page Type, Title, and Topics extracted.
 
 **JSON Output:**
-To get the fully structured dataset (which includes the full content, heading list, and identified links/images), use the `--json` flag:
+To get the fully structured dataset (which includes the full content, description, heading list, and identified links/images), use the `--json` flag:
 ```bash
 python main.py https://news.ycombinator.com/ --json
 ```
-python main.py https://www.rei.com/blog/camp/how-to-introduce-your-indoorsy-friend-to-the-outdoors
+
+**Debug Mode:**
+Enable detailed logging for troubleshooting:
+```bash
+python main.py https://example.com --debug
+```
 
 ---
 
@@ -73,11 +87,14 @@ curl -X POST "http://localhost:8000/crawl" -H "Content-Type: application/json" -
 
 MetaCrawl is managed using `pydantic-settings`. Configs are read from environment variables matching the `METACRAWL_` prefix.
 
-| Env Variable | Description |
-| :--- | :--- |
-| `METACRAWL_TIMEOUT` | Networking max timeout |
-| `METACRAWL_EXTRACTOR_TYPE` | Either `trafilatura` (advanced) or `basic` (fallback parsing) |
-| `METACRAWL_LOG_LEVEL` | Application logging (`INFO`, `DEBUG`) |
+| Env Variable | Default | Description |
+| :--- | :--- | :--- |
+| `METACRAWL_TIMEOUT` | `15` | Networking max timeout (seconds) |
+| `METACRAWL_EXTRACTOR_TYPE` | `trafilatura` | Either `trafilatura` (advanced) or `basic` (fallback parsing) |
+| `METACRAWL_LOG_LEVEL` | `INFO` | Application logging (`INFO`, `DEBUG`, `WARNING`) |
+| `METACRAWL_HEADLESS` | `True` | Run Playwright in headless mode |
+| `METACRAWL_USE_PLAYWRIGHT_FALLBACK` | `True` | Enable Playwright if HTTP fetch fails or returns 403 |
+| `METACRAWL_USER_AGENT` | (Standard) | Custom User-Agent string |
 
 
 ## 📂 Project Structure

@@ -28,6 +28,8 @@ Crawl a single URL and return structured data.
 
 | Status | Condition |
 |:---|:---|
+| `400` | Bad request (e.g., invalid URL format) |
+| `404` | Resource not found or page missing |
 | `403` | Fetch returned 403 and fallback also failed |
 | `500` | Unexpected server error during processing |
 

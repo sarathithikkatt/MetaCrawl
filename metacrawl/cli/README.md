@@ -27,6 +27,7 @@ python main.py https://example.com
 | `urls` | positional | yes | One or more URLs to crawl |
 | `--json` | flag | no | Output full structured results as JSON |
 | `--max-topics` | int | no | Max topics to display in summary mode (default: 5) |
+| `--debug` | flag | no | Enable detailed debug logging for troubleshooting |
 
 ## Output Modes
 
