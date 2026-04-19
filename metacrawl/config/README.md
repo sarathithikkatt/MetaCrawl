@@ -25,7 +25,8 @@ All modules import the singleton `settings` object directly — no dependency in
 |:---|:---|:---|:---|:---|
 | `timeout` | `METACRAWL_TIMEOUT` | `int` | `15` | HTTP request timeout in seconds |
 | `max_retries` | `METACRAWL_MAX_RETRIES` | `int` | `3` | Max retry attempts (reserved) |
-| `user_agent` | `METACRAWL_USER_AGENT` | `str` | `"MetaCrawl/2.0"` | User-Agent header |
+| `user_agent` | `METACRAWL_USER_AGENT` | `str` | (Chrome 120) | Modern Chrome User-Agent header |
+| `rate_limit_delay` | `METACRAWL_RATE_LIMIT_DELAY` | `float` | `1.0` | Seconds between requests to the same domain |
 | `use_playwright_fallback` | `METACRAWL_USE_PLAYWRIGHT_FALLBACK` | `bool` | `True` | Enable Playwright 403 fallback |
 | `playwright_timeout` | `METACRAWL_PLAYWRIGHT_TIMEOUT` | `int` | `30` | Playwright page-load timeout (seconds) |
 | `headless` | `METACRAWL_HEADLESS` | `bool` | `True` | Run Playwright in headless mode |

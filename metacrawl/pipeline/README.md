@@ -28,12 +28,15 @@ class CrawlerPipeline:
 
 `process_url(url)` executes these stages in order:
 
-1. **Fetch** — calls `self.fetcher.fetch(url)` to download HTML.
-2. **Fallback** — if status is `403` and `fallback_fetcher` is set, retries with that fetcher.
-3. **Extract** — calls `self.extractor.extract(html, final_url)` to parse structured data.
-4. **Classify** — calls `self.classifier.classify(extracted_data)` to determine page type.
-5. **Topics** — calls `self.topic_extractor.extract_topics(content)` to find key topics.
-6. **Assemble** — builds and returns a `CrawledData` Pydantic model.
+1. **Rate Limit Check** — ensures compliance with `settings.rate_limit_delay` for the domain.
+2. **Robots.txt Check** — fetches and parses `/robots.txt` to verify the URL can be crawled.
+3. **Fetch** — calls `self.fetcher.fetch(url)` to download HTML.
+4. **403 Fallback** — if status is `403` and `fallback_fetcher` is set, retries with that fetcher.
+5. **Extract** — calls `self.extractor.extract(html, final_url)` to parse structured data.
+6. **Classify** — calls `self.classifier.classify(extracted_data)` to determine page type.
+7. **Challenge Fallback** — if type is `challenge` (bot detection) and `fallback_fetcher` is set, retries the whole fetch/extract/classify cycle.
+8. **Topics** — calls `self.topic_extractor.extract_topics(content)` to find key topics.
+9. **Assemble** — builds and returns a `CrawledData` Pydantic model.
 
 Each stage is wrapped in error handling — if extraction, classification, or topic extraction fails, the pipeline returns a partial result rather than crashing.
 

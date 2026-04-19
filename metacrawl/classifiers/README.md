@@ -21,6 +21,7 @@ class BaseClassifier(ABC):
 | `"product"` | E-commerce product pages (detected via cart/buy/price keywords) |
 | `"homepage"` | Sparse content with many outbound links and "home/welcome" in title |
 | `"category/list"` | Index or listing pages (many links, low content density) |
+| `"challenge"` | Bot-detection or challenge pages (Amazon, Captchas, etc.) |
 | `"other"` | Default fallback when no heuristic matches |
 
 ## Files
@@ -34,11 +35,12 @@ class BaseClassifier(ABC):
 
 The classifier evaluates the extracted data in priority order:
 
-1. **Product** — Scores keywords like "add to cart", "buy now", "in stock", "shipping" in content and headings. ≥2 matches → product.
-2. **Homepage** — Short content (<1000 chars) + many links (>20) + title contains "home"/"welcome".
-3. **Category/List** — Many links (>15) + short content (<2000) + list keywords in title/headings or high link-to-content ratio.
-4. **Article** — Long content (>1500 chars) or presence of "published"/"read time" in the first 1000 chars.
-5. **Other** — Default fallback.
+1. **Challenge** — Detects presence of bot-protection keywords like "automated access", "captcha", "robot", or specific Amazon challenge patterns.
+2. **Product** — Scores keywords like "add to cart", "buy now", "in stock", "shipping" in content and headings. ≥2 matches → product.
+3. **Homepage** — Short content (<1000 chars) + many links (>20) + title contains "home"/"welcome".
+4. **Category/List** — Many links (>15) + short content (<2000) + list keywords in title/headings or high link-to-content ratio.
+5. **Article** — Long content (>1500 chars) or presence of "published"/"read time" in the first 1000 chars.
+6. **Other** — Default fallback.
 
 ## Adding a New Classifier
 
