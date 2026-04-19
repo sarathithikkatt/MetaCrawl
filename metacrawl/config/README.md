@@ -32,6 +32,7 @@ All modules import the singleton `settings` object directly — no dependency in
 | `extractor_type` | `METACRAWL_EXTRACTOR_TYPE` | `"trafilatura" \| "basic"` | `"trafilatura"` | Which extractor implementation to use |
 | `topic_model` | `METACRAWL_TOPIC_MODEL` | `"tfidf" \| "yake"` | `"tfidf"` | Which topic extractor to use |
 | `log_level` | `METACRAWL_LOG_LEVEL` | `str` | `"INFO"` | Python logging level |
+| `log_dir` | `METACRAWL_LOG_DIR` | `str` | `"logs"` | Directory to store log files |
 
 ## Override Examples
 

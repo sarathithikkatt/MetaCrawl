@@ -22,7 +22,7 @@ class BaseFetcher(ABC):
 |:---|:---|
 | `base.py` | `BaseFetcher` ABC — the contract all fetchers must satisfy |
 | `http_fetcher.py` | `HttpFetcher` — primary fetcher using `aiohttp` with configurable timeout and user-agent |
-| `playwright_fetcher.py` | `PlaywrightFetcher` — headless Chromium fallback for JS-heavy or bot-protected sites |
+| `playwright_fetcher.py` | `PlaywrightFetcher` — headless Chromium fallback with `playwright-stealth` integration for bot-protected sites |
 
 ## How Fallback Works
 
