@@ -1,16 +1,16 @@
-from typing import Dict, Any, Type, Optional
+from typing import Optional
 from urllib.parse import urlparse, urljoin
 import urllib.robotparser
 import asyncio
 import time
 
-from metacrawl.models.models import CrawledData
-from metacrawl.fetchers.base import BaseFetcher
-from metacrawl.extractors.base import BaseExtractor
-from metacrawl.classifiers.base import BaseClassifier
-from metacrawl.topics.base import BaseTopicExtractor
-from metacrawl.config.settings import settings
-from metacrawl.utils.logger import get_logger
+from metacrawl.models import CrawledData
+from metacrawl.fetchers import BaseFetcher
+from metacrawl.extractors import BaseExtractor
+from metacrawl.classifiers import BaseClassifier
+from metacrawl.topics import BaseTopicExtractor
+from metacrawl.config import settings
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -26,8 +26,8 @@ class CrawlerPipeline:
         self.classifier = classifier
         self.topic_extractor = topic_extractor
         self.fallback_fetcher = fallback_fetcher
-        self._robots_cache: Dict[str, urllib.robotparser.RobotFileParser] = {}
-        self._last_request_time: Dict[str, float] = {}
+        self._robots_cache: dict[str, urllib.robotparser.RobotFileParser] = {}
+        self._last_request_time: dict[str, float] = {}
         
     async def _is_allowed_by_robots(self, url: str) -> bool:
         parsed_url = urlparse(url)
@@ -58,17 +58,17 @@ class CrawlerPipeline:
         domain = parsed_url.netloc
         base_domain = f"{parsed_url.scheme}://{domain}"
         logger.info(f"Starting pipeline for URL: {url}")
-        
-        # 0. Rate limiting
+
+        # Rate limiting per domain
         last_time = self._last_request_time.get(base_domain, 0)
         elapsed = time.time() - last_time
         if elapsed < settings.rate_limit_delay:
             wait_time = settings.rate_limit_delay - elapsed
             logger.debug(f"Rate limiting {domain}: waiting {wait_time:.2f}s")
             await asyncio.sleep(wait_time)
-        
-        # 1. Robots.txt check
-        if not await self._is_allowed_by_robots(url):
+
+        # Checking robots.txt
+        if settings.check_robots_txt and not await self._is_allowed_by_robots(url):
             logger.warning(f"URL disallowed by robots.txt: {url}")
             return CrawledData(
                 url=url,
@@ -78,12 +78,11 @@ class CrawlerPipeline:
                 page_type="other"
             )
 
-        # 2. Fetch
+        # Fether
         logger.debug(f"Fetching HTML for {url}...")
         self._last_request_time[base_domain] = time.time()
         html, status, error, final_url = await self.fetcher.fetch(url)
-        
-        # Check for 403 and fallback fetcher configured
+
         if status == 403 and self.fallback_fetcher:
             logger.warning(f"Fetch failed with 403 FORBIDDEN. Retrying using Playwright fallback...")
             html, status, error, final_url = await self.fallback_fetcher.fetch(url)
@@ -100,13 +99,12 @@ class CrawlerPipeline:
                 page_type="other"
             )
             
+        # Extractor
         real_domain = urlparse(final_url).netloc
-        
-        # 2. Extract
         logger.debug(f"Extracting content from {final_url}...")
         try:
             extracted = self.extractor.extract(html, final_url)
-            extracted["url"] = final_url  # Pass URL to classifier
+            extracted["url"] = final_url
         except Exception as e:
             logger.error(f"Extraction error on {final_url}: {e}")
             return CrawledData(
@@ -116,8 +114,8 @@ class CrawlerPipeline:
                 error=f"Extraction failed: {str(e)}",
                 page_type="other"
             )
-            
-        # 3. Classify
+
+        # Classifier
         logger.debug(f"Classifying page {final_url}...")
         try:
             page_type = self.classifier.classify(extracted)
@@ -125,7 +123,7 @@ class CrawlerPipeline:
             logger.error(f"Classification error on {final_url}: {e}")
             page_type = "other"
 
-        # 4. Handle Bot Detection / Challenge (Retry with fallback if needed)
+
         if page_type == "challenge" and self.fallback_fetcher:
             logger.warning(f"Challenge page detected (bot detection) for {final_url}. Retrying with Playwright fallback...")
             html, status, error, final_url = await self.fallback_fetcher.fetch(url)
@@ -140,8 +138,7 @@ class CrawlerPipeline:
                     logger.error(f"Post-fallback extraction/classification error: {e}")
             else:
                 logger.warning(f"Playwright fallback also failed or returned challenge for {url}")
-            
-        # 5. Extract Topics
+
         topics = []
         try:
             if extracted.get("content"):
@@ -152,7 +149,8 @@ class CrawlerPipeline:
             pass
             
         logger.info(f"Successfully processed {final_url} (Type: {page_type})")
-        # Assemble
+
+        # Assembler
         return CrawledData(
             url=final_url,
             domain=real_domain,

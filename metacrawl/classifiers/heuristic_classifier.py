@@ -1,12 +1,11 @@
-import re
-from typing import Dict, Any
+from typing import Any
 from .base import BaseClassifier
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 
 class HeuristicClassifier(BaseClassifier):
-    def classify(self, extracted_data: Dict[str, Any]) -> str:
+    def classify(self, extracted_data: dict[str, Any]) -> str:
         content = extracted_data.get("content", "") or ""
         headings = extracted_data.get("headings", [])
         title = extracted_data.get("title", "") or ""

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Any
 
 class BaseExtractor(ABC):
     """
@@ -7,7 +7,7 @@ class BaseExtractor(ABC):
     and main content from HTML.
     """
     @abstractmethod
-    def extract(self, html: str, url: str) -> Dict[str, Any]:
+    def extract(self, html: str, url: str) -> dict[str, Any]:
         """
         Extract content from HTML.
         

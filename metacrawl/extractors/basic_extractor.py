@@ -1,13 +1,13 @@
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from typing import Dict, Any, List
+from typing import Any
 from .base import BaseExtractor
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 
 class BasicExtractor(BaseExtractor):
-    def extract(self, html: str, url: str) -> Dict[str, Any]:
+    def extract(self, html: str, url: str) -> dict[str, Any]:
         logger.debug(f"Starting basic extraction for {url}")
         soup = BeautifulSoup(html, "lxml")
         
@@ -21,13 +21,12 @@ class BasicExtractor(BaseExtractor):
         canonical_tag = soup.find("link", rel="canonical")
         canonical_url = urljoin(url, canonical_tag["href"].strip()) if canonical_tag and canonical_tag.get("href") else None
             
-        headings: List[str] = []
+        headings: list[str] = []
         for tag in ["h1", "h2", "h3"]:
             for h in soup.find_all(tag):
                 if text := h.get_text(strip=True):
                     headings.append(text)
-                    
-        # Basic content: just dump everything
+
         content = soup.get_text(separator="\n", strip=True)
         if not content:
             logger.warning(f"No text content extracted for {url}")
@@ -38,7 +37,7 @@ class BasicExtractor(BaseExtractor):
             if not href.startswith("javascript:") and not href.startswith("mailto:") and not href.startswith("#"):
                 links.add(urljoin(url, href))
                 
-        images: List[Dict[str, str]] = []
+        images: list[dict[str, str]] = []
         for img in soup.find_all("img", src=True):
             if "src" in img.attrs:
                 images.append({

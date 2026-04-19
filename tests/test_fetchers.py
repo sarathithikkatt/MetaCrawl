@@ -2,8 +2,7 @@ import pytest
 import aiohttp
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
-from metacrawl.fetchers.http_fetcher import HttpFetcher
-from metacrawl.fetchers.playwright_fetcher import PlaywrightFetcher
+from metacrawl.fetchers import HttpFetcher, PlaywrightFetcher
 
 @pytest.mark.asyncio
 async def test_http_fetcher_success():

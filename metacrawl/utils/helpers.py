@@ -1,11 +1,9 @@
-from metacrawl.config.settings import settings
-from metacrawl.pipeline.pipeline import CrawlerPipeline
-from metacrawl.fetchers.http_fetcher import HttpFetcher
-from metacrawl.fetchers.playwright_fetcher import PlaywrightFetcher
-from metacrawl.extractors.trafilatura_extractor import TrafilaturaExtractor
-from metacrawl.extractors.basic_extractor import BasicExtractor
-from metacrawl.classifiers.heuristic_classifier import HeuristicClassifier
-from metacrawl.topics.tfidf_extractor import TFIDFTopicExtractor
+from metacrawl.config import settings
+from metacrawl.pipeline import CrawlerPipeline
+from metacrawl.fetchers import HttpFetcher, PlaywrightFetcher
+from metacrawl.extractors import TrafilaturaExtractor, BasicExtractor
+from metacrawl.classifiers import HeuristicClassifier
+from metacrawl.topics import TFIDFTopicExtractor
 from metacrawl.utils.logger import get_logger
 
 logger = get_logger(__name__)

@@ -1,5 +1,5 @@
 import pytest
-from metacrawl.classifiers.heuristic_classifier import HeuristicClassifier
+from metacrawl.classifiers import HeuristicClassifier
 
 def test_amazon_challenge_detection():
     classifier = HeuristicClassifier()

@@ -2,8 +2,8 @@ from typing import Tuple, Optional
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 
 from .base import BaseFetcher
-from metacrawl.config.settings import settings
-from metacrawl.utils.logger import get_logger
+from metacrawl.config import settings
+from metacrawl.utils import get_logger
 
 from playwright_stealth import Stealth
 

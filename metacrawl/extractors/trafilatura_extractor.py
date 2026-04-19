@@ -1,14 +1,14 @@
 from bs4 import BeautifulSoup
 import trafilatura
 from urllib.parse import urljoin
-from typing import Dict, Any, List
+from typing import Any
 from .base import BaseExtractor
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 
 class TrafilaturaExtractor(BaseExtractor):
-    def extract(self, html: str, url: str) -> Dict[str, Any]:
+    def extract(self, html: str, url: str) -> dict[str, Any]:
         logger.debug(f"Starting trafilatura extraction for {url}")
         soup = BeautifulSoup(html, "lxml")
         
@@ -32,7 +32,7 @@ class TrafilaturaExtractor(BaseExtractor):
         canonical_url = urljoin(url, canonical_tag["href"].strip()) if canonical_tag and canonical_tag.get("href") else None
             
         # Extract headings
-        headings: List[str] = []
+        headings: list[str] = []
         for tag in ["h1", "h2", "h3"]:
             for h in soup.find_all(tag):
                 text = h.get_text(strip=True)
@@ -55,7 +55,7 @@ class TrafilaturaExtractor(BaseExtractor):
                 links.add(absolute_url)
                 
         # Extract images
-        images: List[Dict[str, str]] = []
+        images: list[dict[str, str]] = []
         for img in soup.find_all("img", src=True):
             if "src" in img.attrs:
                 src = urljoin(url, img["src"].strip())
