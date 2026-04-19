@@ -4,8 +4,7 @@ import asyncio
 import json
 import logging
 
-from metacrawl.utils.helpers import get_configured_pipeline
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_configured_pipeline, get_logger
 
 logger = get_logger(__name__)
 

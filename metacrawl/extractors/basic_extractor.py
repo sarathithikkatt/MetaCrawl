@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from typing import Any
 from .base import BaseExtractor
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 

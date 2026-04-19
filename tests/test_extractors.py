@@ -1,6 +1,5 @@
 import pytest
-from metacrawl.extractors.basic_extractor import BasicExtractor
-from metacrawl.extractors.trafilatura_extractor import TrafilaturaExtractor
+from metacrawl.extractors import BasicExtractor, TrafilaturaExtractor
 
 SAMPLE_HTML = """
 <html>

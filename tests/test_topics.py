@@ -1,5 +1,5 @@
 import pytest
-from metacrawl.topics.tfidf_extractor import TFIDFTopicExtractor
+from metacrawl.topics import TFIDFTopicExtractor
 
 def test_tfidf_topic_extractor():
     extractor = TFIDFTopicExtractor()

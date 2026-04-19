@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
-from metacrawl.pipeline.pipeline import CrawlerPipeline
-from metacrawl.models.models import CrawledData
+from metacrawl.pipeline import CrawlerPipeline
+from metacrawl.models import CrawledData
 
 @pytest.mark.asyncio
 async def test_pipeline_handles_challenge_with_fallback():

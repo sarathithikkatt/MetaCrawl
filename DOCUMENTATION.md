@@ -57,9 +57,10 @@ To harness the Dependency Injection architecture cleanly to create Custom Module
 
 1. Subclass an existing API Base Class from a module folder:
 ```python
-from metacrawl.fetchers.base import BaseFetcher
+from metacrawl.fetchers import BaseFetcher
 
 class PuppeteerFetcher(BaseFetcher):
+```
     async def fetch(self, url: str):
         # your unique JS headless execution here
         return html, status, None, final_url
@@ -67,8 +68,8 @@ class PuppeteerFetcher(BaseFetcher):
 
 2. Register the dependency when instantiating the unified Orchestrator:
 ```python
-from metacrawl.pipeline.pipeline import CrawlerPipeline
-from metacrawl.extractors.trafilatura_extractor import TrafilaturaExtractor
+from metacrawl.pipeline import CrawlerPipeline
+from metacrawl.extractors import TrafilaturaExtractor
 
 custom_pipe = CrawlerPipeline(
     fetcher=PuppeteerFetcher(),   # <--- injected newly
@@ -76,6 +77,7 @@ custom_pipe = CrawlerPipeline(
     classifier=...,
     topic_extractor=...
 )
+```
 
 await custom_pipe.process_url("https://example.com")
 ```

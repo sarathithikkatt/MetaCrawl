@@ -2,7 +2,7 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from metacrawl.config.settings import settings
+from metacrawl.config import settings
 
 
 def get_logger(name: str) -> logging.Logger:

@@ -2,7 +2,7 @@ import pytest
 import json
 from unittest.mock import AsyncMock, patch, MagicMock
 from metacrawl.cli.cli import main_async
-from metacrawl.models.models import CrawledData
+from metacrawl.models import CrawledData
 
 @pytest.mark.asyncio
 async def test_cli_main_async_success():

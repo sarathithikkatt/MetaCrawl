@@ -1,5 +1,5 @@
 import sys
-from metacrawl.cli.cli import main
+from metacrawl.cli import main
 
 if __name__ == "__main__":
     # Provides a top-level runnable script `python main.py`

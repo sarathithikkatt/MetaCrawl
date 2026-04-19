@@ -2,8 +2,8 @@ import aiohttp
 import asyncio
 from typing import Tuple, Optional
 from .base import BaseFetcher
-from metacrawl.config.settings import settings
-from metacrawl.utils.logger import get_logger
+from metacrawl.config import settings
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 

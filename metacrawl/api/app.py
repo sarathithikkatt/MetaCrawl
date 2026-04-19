@@ -3,9 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, HttpUrl
-from metacrawl.utils.helpers import get_configured_pipeline
-from metacrawl.models.models import CrawledData, ErrorResponse
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_configured_pipeline, get_logger
+from metacrawl.models import CrawledData, ErrorResponse
 
 logger = get_logger(__name__)
 

@@ -1,9 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from metacrawl.utils.helpers import get_configured_pipeline
-from metacrawl.pipeline.pipeline import CrawlerPipeline
-from metacrawl.extractors.trafilatura_extractor import TrafilaturaExtractor
-from metacrawl.extractors.basic_extractor import BasicExtractor
+from metacrawl.utils import get_configured_pipeline
+from metacrawl.pipeline import CrawlerPipeline
+from metacrawl.extractors import TrafilaturaExtractor, BasicExtractor
 
 def test_get_configured_pipeline_default():
     # We should mock settings to control the outcome

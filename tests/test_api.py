@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
-from metacrawl.api.app import app
-from metacrawl.models.models import CrawledData
+from metacrawl.api import app
+from metacrawl.models import CrawledData
 
 client = TestClient(app)
 

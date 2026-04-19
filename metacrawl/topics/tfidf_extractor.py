@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from .base import BaseTopicExtractor
-from metacrawl.utils.logger import get_logger
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 

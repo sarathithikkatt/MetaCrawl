@@ -4,13 +4,13 @@ import urllib.robotparser
 import asyncio
 import time
 
-from metacrawl.models.models import CrawledData
-from metacrawl.fetchers.base import BaseFetcher
-from metacrawl.extractors.base import BaseExtractor
-from metacrawl.classifiers.base import BaseClassifier
-from metacrawl.topics.base import BaseTopicExtractor
-from metacrawl.config.settings import settings
-from metacrawl.utils.logger import get_logger
+from metacrawl.models import CrawledData
+from metacrawl.fetchers import BaseFetcher
+from metacrawl.extractors import BaseExtractor
+from metacrawl.classifiers import BaseClassifier
+from metacrawl.topics import BaseTopicExtractor
+from metacrawl.config import settings
+from metacrawl.utils import get_logger
 
 logger = get_logger(__name__)
 
