@@ -35,7 +35,6 @@ class PlaywrightFetcher(BaseFetcher):
 
                 browser = await p.chromium.launch(
                     headless=True,
-                    channel="chrome",
                     args=[
                         "--headless=new",
                         "--no-sandbox",
